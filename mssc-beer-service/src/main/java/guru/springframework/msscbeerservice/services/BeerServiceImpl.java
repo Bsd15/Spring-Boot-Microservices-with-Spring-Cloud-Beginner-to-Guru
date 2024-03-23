@@ -8,7 +8,9 @@ import guru.springframework.msscbeerservice.web.model.BeerDto;
 import guru.springframework.msscbeerservice.web.model.BeerPagedList;
 import guru.springframework.msscbeerservice.web.model.BeerStyleEnum;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,14 +22,16 @@ import java.util.UUID;
  * Created by jt on 2019-06-06.
  */
 @RequiredArgsConstructor
+@Slf4j
 @Service
 public class BeerServiceImpl implements BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
 
     @Override
+    @Cacheable(cacheNames = "beerListCache", condition = "#showInventoryOnHand == false")
     public BeerPagedList listBeers(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest, boolean showInventoryOnHand) {
-
+        log.debug("Inside BeerServiceImpl::listBeers");
         BeerPagedList beerPagedList;
         Page<Beer> beerPage;
 
@@ -44,7 +48,7 @@ public class BeerServiceImpl implements BeerService {
             beerPage = beerRepository.findAll(pageRequest);
         }
 
-        if (showInventoryOnHand){
+        if (showInventoryOnHand) {
             beerPagedList = new BeerPagedList(beerPage
                     .getContent()
                     .stream()
@@ -70,7 +74,9 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
+    @Cacheable(cacheNames = "beerCache", key = "#beerId", condition = "#showInventoryOnHand == false")
     public BeerDto getById(UUID beerId, boolean showInventoryOnHand) {
+        log.debug("Inside BeerServiceImpl::getById");
         if (showInventoryOnHand) {
             return beerMapper.beerToBeerDtoWithInventory(
                     beerRepository.findById(beerId).orElseThrow(NotFoundException::new)

@@ -4,9 +4,18 @@ spring:
       mode: embedded
   jpa:
     defer-datasource-initialization: true
-
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
 sfg:
   brewery:
     beer-inventory-service:
       host: http://localhost:8082
       inventory-path: /api/v1/beer/{beerId}/inventory
+
+logging:
+  level:
+    guru:
+      springframework:
+        msscbeerservice:
+          services: DEBUG
