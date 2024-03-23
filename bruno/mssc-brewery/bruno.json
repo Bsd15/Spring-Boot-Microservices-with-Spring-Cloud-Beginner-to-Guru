@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "mssc-brewery",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
