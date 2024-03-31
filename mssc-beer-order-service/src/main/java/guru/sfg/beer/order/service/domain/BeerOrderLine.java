@@ -23,6 +23,9 @@ import lombok.Setter;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -49,7 +52,7 @@ public class BeerOrderLine extends BaseEntity {
 
     @ManyToOne
     private BeerOrder beerOrder;
-
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID beerId;
     private String upc;
     private Integer orderQuantity = 0;

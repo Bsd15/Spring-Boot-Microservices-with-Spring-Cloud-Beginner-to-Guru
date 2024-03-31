@@ -12,7 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -31,7 +33,9 @@ public class Beer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
+//  Using @Column was throwing Incorrect string value: '\x81\x1Bo\x8A\xC9M...' for column id.
+//  So inorder to overcome this issue, we need to either remove the column definition or add the below annotation i.e. @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
 
     @Version
