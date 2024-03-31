@@ -16,6 +16,7 @@
  */
 package guru.sfg.beer.inventory.service.domain;
 
+import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,7 @@ public class BeerInventory extends BaseEntity{
         this.quantityOnHand = quantityOnHand;
     }
 
+    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false )
     private UUID beerId;
     private String upc;
     private Integer quantityOnHand = 0;
