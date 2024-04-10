@@ -5,7 +5,11 @@ logging:
 server:
   port: 8081
 
+spring:
+  artemis:
+    user: user
+    password: password
+
 sfg:
   brewery:
     beer-service-host: http://localhost:8080
-

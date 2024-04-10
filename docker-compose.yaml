@@ -5,3 +5,11 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
+  activemq:
+    image: apache/activemq-artemis:latest
+    ports:
+      - 8161:8161
+      - 61616:61616
+    environment:
+      ARTEMIS_USER: user
+      ARTEMIS_PASSWORD: password

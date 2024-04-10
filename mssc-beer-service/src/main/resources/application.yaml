@@ -12,6 +12,9 @@ spring:
   h2:
     console:
       enabled: true
+  artemis:
+    user: user
+    password: password
 
 sfg:
   brewery:
