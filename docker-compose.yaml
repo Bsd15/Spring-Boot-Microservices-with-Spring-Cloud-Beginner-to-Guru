@@ -1,3 +1,7 @@
+volumes:
+  mssc_brewery_mysql_data:
+    driver: local
+
 services:
   mysql:
     image: mysql:8.0.36
@@ -5,6 +9,9 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mssc_brewery_mysql_data:/var/lib/mysql
+
   activemq:
     image: apache/activemq-artemis:latest
     ports:
