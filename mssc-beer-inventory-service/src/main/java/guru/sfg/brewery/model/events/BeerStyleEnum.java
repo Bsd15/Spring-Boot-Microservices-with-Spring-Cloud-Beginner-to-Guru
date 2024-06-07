@@ -1,4 +1,4 @@
-package guru.sfg.common.events;
+package guru.sfg.brewery.model.events;
 
 /**
  * Created by jt on 2019-05-12.
