@@ -4,6 +4,7 @@ import guru.sfg.beer.order.service.domain.BeerOrder;
 import guru.sfg.beer.order.service.domain.BeerOrderEventEnum;
 import guru.sfg.beer.order.service.domain.BeerOrderStatusEnum;
 import guru.sfg.beer.order.service.repositories.BeerOrderRepository;
+import guru.sfg.beer.order.service.sm.BeerOrderStateChangeInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -22,6 +23,9 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
 
     private final StateMachineFactory<BeerOrderStatusEnum, BeerOrderEventEnum> stateMachineFactory;
     private final BeerOrderRepository beerOrderRepository;
+    private final BeerOrderStateChangeInterceptor beerOrderStateChangeInterceptor;
+
+    public static final String ORDER_ID_HEADER = "ORDER_ID_HEADER";
 
     @Transactional
     @Override
@@ -40,6 +44,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> stateMachine = build(beerOrder);
         Message<BeerOrderEventEnum> message = MessageBuilder
                 .withPayload(event)
+                .setHeader(ORDER_ID_HEADER, beerOrder.getId())
                 .build();
         stateMachine.sendEvent(Mono.just(message)).subscribe();
     }
@@ -50,9 +55,12 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
 
         stateMachine
                 .getStateMachineAccessor()
-                .doWithAllRegions(sma -> sma.resetStateMachineReactively(
-                                new DefaultStateMachineContext<>(beerOrder.getOrderStatus(), null, null, null)
-                        ).subscribe()
+                .doWithAllRegions(sma -> {
+                            sma.addStateMachineInterceptor(beerOrderStateChangeInterceptor);
+                            sma.resetStateMachineReactively(
+                                    new DefaultStateMachineContext<>(beerOrder.getOrderStatus(), null, null, null)
+                            ).subscribe();
+                        }
                 );
         stateMachine.startReactively().subscribe();
 
