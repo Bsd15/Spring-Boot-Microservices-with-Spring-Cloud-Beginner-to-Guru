@@ -1,5 +1,6 @@
 package guru.sfg.beer.order.service.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +19,11 @@ public class JmsConfig {
 
 
     @Bean
-    public MessageConverter messageConverter() {
+    public MessageConverter messageConverter(ObjectMapper objectMapper) {
         MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
         messageConverter.setTargetType(MessageType.TEXT);
         messageConverter.setTypeIdPropertyName("_type");
+        messageConverter.setObjectMapper(objectMapper);
         return messageConverter;
     }
 }

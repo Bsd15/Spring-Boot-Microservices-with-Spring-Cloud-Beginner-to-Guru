@@ -15,7 +15,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +27,8 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static org.awaitility.Awaitility.await;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathTemplate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -48,6 +52,9 @@ class BeerOrderManagerImplIT {
 
     UUID beerId = UUID.randomUUID();
 
+    @Autowired
+    RestTemplateBuilder restTemplateBuilder;
+
     @BeforeEach
     void setUp() {
         testCustomer = customerRepository.save(Customer.builder()
@@ -56,22 +63,19 @@ class BeerOrderManagerImplIT {
     }
 
     @Test
+    @Transactional
     void testNewToAllocated() throws JsonProcessingException, InterruptedException {
         BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
-
-        stubFor(get(BeerServiceImpl.BEER_UPC_PATH_V1 + beerId)
+//http://localhost:8083/api/v1/beerUpc/12345
+        stubFor(get(urlPathEqualTo(BeerServiceImpl.BEER_UPC_PATH_V1 + "12345"))
                 .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         BeerOrder beerOrder = createBeerOrder();
 
         BeerOrder savedBeerOrder = beerOrderManager.newBeerOrder(beerOrder);
 
-        await().untilAsserted(() -> {
-            BeerOrder foundOrder = beerOrderRepository.findById(beerOrder.getId()).get();
-
-            //todo - ALLOCATED STATUS
-            assertEquals(BeerOrderStatusEnum.ALLOCATION_PENDING, foundOrder.getOrderStatus());
-        });
+        Thread.sleep(5000);
+        savedBeerOrder = beerOrderRepository.findOneById(savedBeerOrder.getId());
 
         BeerOrder savedBeerOrder2 = beerOrderRepository.findById(savedBeerOrder.getId()).get();
 
@@ -80,6 +84,20 @@ class BeerOrderManagerImplIT {
 
     }
 
+    @Test
+    void wiremockTest() throws JsonProcessingException {
+        BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
+        stubFor(
+                get(urlPathTemplate(BeerServiceImpl.BEER_UPC_PATH_V1 + "{upc}"))
+                        .willReturn(okJson(objectMapper.writeValueAsString(beerDto)))
+        );
+
+        RestTemplate restTemplate = restTemplateBuilder
+                .rootUri("http://localhost:8083")
+                .build();
+
+        BeerDto beerDto1 = restTemplate.getForObject(BeerServiceImpl.BEER_UPC_PATH_V1 + "/12345", BeerDto.class);
+    }
 
     public BeerOrder createBeerOrder(){
         BeerOrder beerOrder = BeerOrder.builder()

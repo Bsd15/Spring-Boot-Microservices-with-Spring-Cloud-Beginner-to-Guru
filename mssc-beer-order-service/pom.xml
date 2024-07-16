@@ -30,6 +30,15 @@
             <version>${jaxb.version}</version>
         </dependency>
 
+        <!--
+        Ref: https://docs.spring.io/spring-boot/reference/messaging/jms.html#messaging.jms.artemis:~:text=If%20you%20use%20spring%2Dboot%2Dstarter%2Dartemis%2C%20the%20necessary%20dependencies%20to%20connect%20to%20an%20existing%20ActiveMQ%20Artemis%20instance%20are%20provided%2C%20as%20well%20as%20the%20Spring%20infrastructure%20to%20integrate%20with%20JMS.%20Adding%20org.apache.activemq%3Aartemis%2Djakarta%2Dserver%20to%20your%20application%20lets%20you%20use%20embedded%20mode.
+        -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jakarta-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock-jetty12</artifactId>
