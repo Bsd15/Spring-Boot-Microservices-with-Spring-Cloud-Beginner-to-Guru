@@ -5,17 +5,16 @@ import guru.sfg.brewery.model.events.ValidateBeerOrderRequest;
 import guru.sfg.brewery.model.events.ValidateBeerOrderResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.test.context.TestComponent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
-@TestComponent
+@Component
 @RequiredArgsConstructor
 @Slf4j
-//@Profile("integrationTest")
+@Profile("integrationTest")
 public class BeerOrderValidationListener {
     private final JmsTemplate jmsTemplate;
 

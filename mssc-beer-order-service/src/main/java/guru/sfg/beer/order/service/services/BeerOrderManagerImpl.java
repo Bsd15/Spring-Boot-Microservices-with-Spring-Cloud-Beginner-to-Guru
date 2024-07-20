@@ -30,8 +30,8 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
 
     public static final String ORDER_ID_HEADER = "ORDER_ID_HEADER";
 
-    @Transactional
     @Override
+    @Transactional
     public BeerOrder newBeerOrder(BeerOrder beerOrder) {
         log.debug("Inside newBeerOrder");
         beerOrder.setId(null);
@@ -42,6 +42,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     }
 
     @Override
+    @Transactional
     public void validateBeerOrder(UUID beerOrderId, boolean isOrderValid) {
         log.debug("Beer Order {} is {}", beerOrderId, isOrderValid ? "valid" : "invalid");
         BeerOrder beerOrder = beerOrderRepository.findOneById(beerOrderId);
@@ -55,6 +56,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     }
 
     @Override
+    @Transactional
     public void beerOrderAllocationPassed(BeerOrderDto beerOrderDto) {
         BeerOrder beerOrder = beerOrderRepository.findOneById(beerOrderDto.getId());
         sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_SUCCESS);
@@ -62,6 +64,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     }
 
     @Override
+    @Transactional
     public void beerOrderAllocationPendingInventory(BeerOrderDto beerOrderDto) {
         BeerOrder beerOrder = beerOrderRepository.findOneById(beerOrderDto.getId());
         sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_NO_INVENTORY);

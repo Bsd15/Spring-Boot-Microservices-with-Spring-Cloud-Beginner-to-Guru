@@ -84,21 +84,6 @@ class BeerOrderManagerImplIT {
 
     }
 
-    @Test
-    void wiremockTest() throws JsonProcessingException {
-        BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
-        stubFor(
-                get(urlPathTemplate(BeerServiceImpl.BEER_UPC_PATH_V1 + "{upc}"))
-                        .willReturn(okJson(objectMapper.writeValueAsString(beerDto)))
-        );
-
-        RestTemplate restTemplate = restTemplateBuilder
-                .rootUri("http://localhost:8083")
-                .build();
-
-        BeerDto beerDto1 = restTemplate.getForObject(BeerServiceImpl.BEER_UPC_PATH_V1 + "/12345", BeerDto.class);
-    }
-
     public BeerOrder createBeerOrder(){
         BeerOrder beerOrder = BeerOrder.builder()
                 .customer(testCustomer)
