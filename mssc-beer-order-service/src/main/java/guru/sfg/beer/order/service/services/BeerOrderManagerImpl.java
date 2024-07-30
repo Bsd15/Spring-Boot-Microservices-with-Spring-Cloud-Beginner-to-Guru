@@ -38,6 +38,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         beerOrder.setOrderStatus(BeerOrderStatusEnum.NEW);
         BeerOrder savedBeerOrder = beerOrderRepository.save(beerOrder);
         sendBeerOrderEvent(savedBeerOrder, BeerOrderEventEnum.VALIDATE_ORDER);
+        log.debug("Inside newBeerOrder. Total saved beer orders: {}", beerOrderRepository.findAll().size());
         return savedBeerOrder;
     }
 
@@ -45,6 +46,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     @Transactional
     public void validateBeerOrder(UUID beerOrderId, boolean isOrderValid) {
         log.debug("Beer Order {} is {}", beerOrderId, isOrderValid ? "valid" : "invalid");
+        log.debug("Inside validateBeerOrder. Total saved beer orders: {}", beerOrderRepository.findAll().size());
         BeerOrder beerOrder = beerOrderRepository.findOneById(beerOrderId);
         if (isOrderValid) {
             sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.VALIDATION_PASSED);

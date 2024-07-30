@@ -23,7 +23,7 @@ public class BeerOrderValidationListener {
 
         ValidateBeerOrderRequest request = (ValidateBeerOrderRequest) msg.getPayload();
 
-        System.out.println("########### I RAN ########");
+        log.debug("########### I RAN ########");
 
         jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESULT,
                 ValidateBeerOrderResult.builder()
