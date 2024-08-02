@@ -36,5 +36,4 @@ import java.util.UUID;
 public interface BeerOrderRepository  extends JpaRepository<BeerOrder, UUID> {
     Page<BeerOrder> findAllByCustomer(Customer customer, Pageable pageable);
     List<BeerOrder> findAllByOrderStatus(BeerOrderStatusEnum beerOrderStatusEnum);
-    BeerOrder findOneById(UUID id);
 }
