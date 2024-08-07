@@ -64,7 +64,6 @@ class BeerOrderManagerImplIT {
     }
 
     @Test
-    @Transactional
     void testNewToAllocated() throws JsonProcessingException, InterruptedException {
         BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
 //http://localhost:8083/api/v1/beerUpc/12345
