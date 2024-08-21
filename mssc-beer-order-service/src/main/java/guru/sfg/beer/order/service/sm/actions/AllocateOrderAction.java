@@ -36,7 +36,7 @@ public class AllocateOrderAction implements Action<BeerOrderStatusEnum, BeerOrde
         beerOrderOptional.ifPresentOrElse(beerOrder -> {
             jmsTemplate.convertAndSend(JmsConfig.ALLOCATE_ORDER_QUEUE,
                     beerOrderMapper.beerOrderToDto(beerOrderOptional.get()));
-            log.debug("Sent Allocation Request for order id: " + beerOrderId);
+            log.debug("Sent Allocation Request for order id: {}", beerOrderId);
         }, () -> log.error("Beer Order Not Found!"));
     }
 }

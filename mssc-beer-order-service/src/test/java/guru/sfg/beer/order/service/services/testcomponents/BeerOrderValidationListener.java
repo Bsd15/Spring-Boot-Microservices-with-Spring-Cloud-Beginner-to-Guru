@@ -19,7 +19,7 @@ public class BeerOrderValidationListener {
     private final JmsTemplate jmsTemplate;
 
     @JmsListener(destination = JmsConfig.VALIDATE_ORDER)
-    public void list(Message msg){
+    public void listen(Message msg){
 
         ValidateBeerOrderRequest request = (ValidateBeerOrderRequest) msg.getPayload();
 
