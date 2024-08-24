@@ -2,6 +2,7 @@ package guru.sfg.beer.order.service.services.testcomponents;
 
 import guru.sfg.beer.order.service.config.JmsConfig;
 import guru.sfg.brewery.model.BeerOrderDto;
+import guru.sfg.brewery.model.events.AllocateOrderRequest;
 import guru.sfg.brewery.model.events.AllocateOrderResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +22,16 @@ public class BeerOrderAllocationListener {
     @JmsListener(destination = JmsConfig.ALLOCATE_ORDER_QUEUE)
     public void listen(Message msg) {
         log.debug("Inside BeerOrderAllocationListener");
-        BeerOrderDto beerOrderDto = (BeerOrderDto) msg.getPayload();
-        log.debug("Payload: {}", beerOrderDto);
+        AllocateOrderRequest request = (AllocateOrderRequest) msg.getPayload();
+        request.getBeerOrderDto().getBeerOrderLines().forEach(beerOrderLineDto -> {
+            beerOrderLineDto.setQuantityAllocated(beerOrderLineDto.getOrderQuantity());
+        });
+        log.debug("Payload: {}", request);
         AllocateOrderResult allocateOrderResult = AllocateOrderResult
                 .builder()
                 .allocationError(false)
                 .pendingInventory(false)
-                .beerOrderDto(beerOrderDto)
+                .beerOrderDto(request.getBeerOrderDto())
                 .build();
         jmsTemplate.convertAndSend(JmsConfig.ALLOCATE_ORDER_RESULT, allocateOrderResult);
     }
