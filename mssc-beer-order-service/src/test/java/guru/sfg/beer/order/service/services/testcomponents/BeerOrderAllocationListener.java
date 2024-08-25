@@ -12,6 +12,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -23,14 +25,20 @@ public class BeerOrderAllocationListener {
     public void listen(Message msg) {
         log.debug("Inside BeerOrderAllocationListener");
         AllocateOrderRequest request = (AllocateOrderRequest) msg.getPayload();
+        boolean allocationError = Objects.equals("fail-allocation", request.getBeerOrderDto().getCustomerRef());
+        boolean pendingInventory = Objects.equals("partial-allocation", request.getBeerOrderDto().getCustomerRef());
         request.getBeerOrderDto().getBeerOrderLines().forEach(beerOrderLineDto -> {
-            beerOrderLineDto.setQuantityAllocated(beerOrderLineDto.getOrderQuantity());
+            if (pendingInventory) {
+                beerOrderLineDto.setQuantityAllocated(beerOrderLineDto.getOrderQuantity() - 1);
+            } else {
+                beerOrderLineDto.setQuantityAllocated(beerOrderLineDto.getOrderQuantity());
+            }
         });
         log.debug("Payload: {}", request);
         AllocateOrderResult allocateOrderResult = AllocateOrderResult
                 .builder()
-                .allocationError(false)
-                .pendingInventory(false)
+                .allocationError(allocationError)
+                .pendingInventory(pendingInventory)
                 .beerOrderDto(request.getBeerOrderDto())
                 .build();
         jmsTemplate.convertAndSend(JmsConfig.ALLOCATE_ORDER_RESULT, allocateOrderResult);
