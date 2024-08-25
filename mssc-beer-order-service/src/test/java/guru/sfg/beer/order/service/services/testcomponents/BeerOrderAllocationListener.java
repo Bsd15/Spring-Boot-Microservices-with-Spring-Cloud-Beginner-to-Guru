@@ -1,7 +1,6 @@
 package guru.sfg.beer.order.service.services.testcomponents;
 
 import guru.sfg.beer.order.service.config.JmsConfig;
-import guru.sfg.brewery.model.BeerOrderDto;
 import guru.sfg.brewery.model.events.AllocateOrderRequest;
 import guru.sfg.brewery.model.events.AllocateOrderResult;
 import lombok.RequiredArgsConstructor;
