@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @WireMockTest(httpPort = 8083)
 @ActiveProfiles("integrationTest")
-class       BeerOrderManagerImplIT {
+class BeerOrderManagerImplIT {
     @Autowired
     BeerOrderManager beerOrderManager;
 
@@ -171,7 +171,7 @@ class       BeerOrderManagerImplIT {
         });
     }
 
-    public BeerOrder createBeerOrder(){
+    public BeerOrder createBeerOrder() {
         BeerOrder beerOrder = BeerOrder.builder()
                 .customer(testCustomer)
                 .build();
