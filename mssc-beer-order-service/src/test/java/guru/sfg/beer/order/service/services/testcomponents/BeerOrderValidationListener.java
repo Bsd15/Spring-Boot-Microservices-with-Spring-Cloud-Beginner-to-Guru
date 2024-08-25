@@ -11,6 +11,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -20,14 +22,14 @@ public class BeerOrderValidationListener {
 
     @JmsListener(destination = JmsConfig.VALIDATE_ORDER)
     public void listen(Message msg){
-
         ValidateBeerOrderRequest request = (ValidateBeerOrderRequest) msg.getPayload();
-
-        log.debug("########### I RAN ########");
-
+        boolean isValid = true;
+        if (Objects.equals("fail-validation", request.getBeerOrderDto().getCustomerRef())) {
+            isValid = false;
+        }
         jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESULT,
                 ValidateBeerOrderResult.builder()
-                        .isValid(true)
+                        .isValid(isValid)
                         .orderId(request.getBeerOrderDto().getId())
                         .build());
 

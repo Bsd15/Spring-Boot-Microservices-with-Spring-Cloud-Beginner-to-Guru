@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @WireMockTest(httpPort = 8083)
 @ActiveProfiles("integrationTest")
-class BeerOrderManagerImplIT {
+class       BeerOrderManagerImplIT {
     @Autowired
     BeerOrderManager beerOrderManager;
 
@@ -88,6 +88,25 @@ class BeerOrderManagerImplIT {
         assertEquals(BeerOrderStatusEnum.ALLOCATED, savedBeerOrder2.getOrderStatus());
         savedBeerOrder2.getBeerOrderLines().forEach(line -> {
             assertEquals(line.getOrderQuantity(), line.getQuantityAllocated());
+        });
+    }
+
+    @Test
+    void testFailedValidation() throws JsonProcessingException {
+        BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
+
+        stubFor(get(urlPathEqualTo(BeerServiceImpl.BEER_UPC_PATH_V1 + "12345"))
+                .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
+
+        BeerOrder beerOrder = createBeerOrder();
+        beerOrder.setCustomerRef("fail-validation");
+
+        beerOrderManager.newBeerOrder(beerOrder);
+
+        await().untilAsserted(() -> {
+            BeerOrder foundOrder = beerOrderRepository.findById(beerOrder.getId()).get();
+
+            assertEquals(BeerOrderStatusEnum.VALIDATION_EXCEPTION, foundOrder.getOrderStatus());
         });
     }
 
