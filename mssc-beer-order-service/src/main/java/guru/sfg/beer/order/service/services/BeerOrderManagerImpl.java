@@ -6,6 +6,7 @@ import guru.sfg.beer.order.service.domain.BeerOrderStatusEnum;
 import guru.sfg.beer.order.service.repositories.BeerOrderRepository;
 import guru.sfg.beer.order.service.sm.BeerOrderStateChangeInterceptor;
 import guru.sfg.brewery.model.BeerOrderDto;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -28,6 +29,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     private final StateMachineFactory<BeerOrderStatusEnum, BeerOrderEventEnum> stateMachineFactory;
     private final BeerOrderRepository beerOrderRepository;
     private final BeerOrderStateChangeInterceptor beerOrderStateChangeInterceptor;
+    private final EntityManager entityManager;
 
     public static final String ORDER_ID_HEADER = "ORDER_ID_HEADER";
 
@@ -49,6 +51,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     public void validateBeerOrder(UUID beerOrderId, boolean isOrderValid) {
         log.debug("Beer Order {} is {}", beerOrderId, isOrderValid ? "valid" : "invalid");
         log.debug("Inside validateBeerOrder. Total saved beer orders: {}", beerOrderRepository.findAll().size());
+        entityManager.flush();
         Optional<BeerOrder> beerOrderOptional = beerOrderRepository.findById(beerOrderId);
 
         beerOrderOptional.ifPresentOrElse(beerOrder -> {
@@ -119,6 +122,13 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
                 beerOrder -> sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.BEERORDER_PICKED_UP),
                 () -> log.error("Beer Order: {} not found", beerOrderId)
         );
+    }
+
+    @Override
+    public void cancelOrder(UUID id) {
+        beerOrderRepository.findById(id).ifPresentOrElse(beerOrder -> {
+            sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.CANCEL_ORDER);
+        }, () -> log.error("Order Not Found. Id: {}", id));
     }
 
     private void sendBeerOrderEvent(BeerOrder beerOrder, BeerOrderEventEnum event) {
