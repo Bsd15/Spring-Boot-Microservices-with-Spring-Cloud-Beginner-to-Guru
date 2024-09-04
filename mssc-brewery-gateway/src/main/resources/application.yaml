@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: mssc-brewery-gateway
+
+server:
+  port: 9090
