@@ -1,0 +1,15 @@
+meta {
+  name: Get Beer Inventory By Id
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:9090/api/v1/beer/:beerId/inventory
+  body: none
+  auth: none
+}
+
+params:path {
+  beerId: 40422d22-4589-4549-bd29-db7b2ba83dc8
+}
