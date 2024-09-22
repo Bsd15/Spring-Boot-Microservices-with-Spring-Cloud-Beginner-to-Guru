@@ -7,7 +7,7 @@ server:
 
 spring:
   application:
-    name: beer-order-service
+    name: order-service
   artemis:
     user: user
     password: password
