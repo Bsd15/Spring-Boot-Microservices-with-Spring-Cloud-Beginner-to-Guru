@@ -6,6 +6,8 @@ logging:
     guru: debug
 
 spring:
+  application:
+    name: beer-inventory-service
   artemis:
     user: user
     password: password
