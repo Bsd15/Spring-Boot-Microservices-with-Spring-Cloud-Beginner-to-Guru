@@ -6,6 +6,8 @@ server:
   port: 8081
 
 spring:
+  application:
+    name: beer-order-service
   artemis:
     user: user
     password: password
