@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import static guru.springframework.msscbeerservice.services.inventory.BeerInventoryServiceRestTemplateImpl.INVENTORY_PATH;
 
-@FeignClient(name = "inventory-service")
+@FeignClient(name = "inventory-service", fallback = InventoryServiceFeignClientFailover.class)
 public interface InventoryServiceFeignClient {
     @GetMapping(value = INVENTORY_PATH)
     ResponseEntity<List<BeerInventoryDto>> getOnhandInventory(@PathVariable UUID beerId);
