@@ -5,12 +5,12 @@ meta {
 }
 
 get {
-  url: http://localhost:8888/:property/:profile
+  url: http://localhost:8888/:application/:profile
   body: none
   auth: none
 }
 
 params:path {
-  profile: foo
-  property: default
+  profile: local
+  application: beer-service
 }
