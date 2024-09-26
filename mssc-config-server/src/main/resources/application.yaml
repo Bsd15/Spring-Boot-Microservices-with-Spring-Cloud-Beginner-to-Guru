@@ -8,7 +8,7 @@ spring:
       config:
         server:
           git:
-            uri: https://github.com/springframeworkguru/mssc-brewery-config-repo
+            uri: https://github.com/Bsd15/mssc-brewery-config-repo
             clone-on-start: true
 
 logging:
