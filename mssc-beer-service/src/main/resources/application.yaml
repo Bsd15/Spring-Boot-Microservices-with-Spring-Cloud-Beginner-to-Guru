@@ -17,6 +17,13 @@ spring:
   artemis:
     user: user
     password: password
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        serviceId: 'mssc-config-server'
+  config:
+    import: 'optional:configserver:'
 
 sfg:
   brewery:
