@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        serviceId: 'mssc-config-server'
+  config:
+    import: 'optional:configserver:'
