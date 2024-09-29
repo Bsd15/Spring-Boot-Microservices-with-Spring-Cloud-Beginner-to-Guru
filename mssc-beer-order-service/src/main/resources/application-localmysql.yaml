@@ -25,3 +25,6 @@ spring:
         cacheServerConfiguration: true
         elideSetAutoCommits: true
         maintainTimeStats: false
+  cloud:
+    discovery:
+      enabled: false
