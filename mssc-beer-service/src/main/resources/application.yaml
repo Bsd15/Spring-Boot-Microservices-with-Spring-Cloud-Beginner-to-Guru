@@ -30,3 +30,11 @@ logging:
       springframework:
         msscbeerservice:
           services: DEBUG
+  pattern:
+    correlation: '[${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+  include-application-name: false
+
+management:
+  tracing:
+    sampling:
+      probability: 1
