@@ -5,9 +5,12 @@ spring:
 server:
   port: 9090
 
+management:
+  tracing:
+    sampling:
+      probability: 1
+
 logging:
-  level:
-    org:
-      springframework:
-        cloud:
-          gateway: debug
+  pattern:
+    correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+  include-application-name: false
