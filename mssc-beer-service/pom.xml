@@ -13,6 +13,11 @@
     <name>mssc-beer-service</name>
     <description>MSSC Beer Service</description>
 
+    <properties>
+        <logback-classic.version>1.5.6</logback-classic.version>
+        <logback-access.version>2.0.2</logback-access.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -67,5 +72,28 @@
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-zipkin</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>8.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback-classic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback.access</groupId>
+            <artifactId>common</artifactId>
+            <version>${logback-access.version}</version>
+        </dependency>
+
+
     </dependencies>
 </project>
