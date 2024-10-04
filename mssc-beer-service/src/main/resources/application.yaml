@@ -38,3 +38,7 @@ management:
   tracing:
     sampling:
       probability: 1
+  defaults:
+    metrics:
+      export:
+        enabled: false
