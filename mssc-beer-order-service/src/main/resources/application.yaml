@@ -1,6 +1,9 @@
 logging:
   level:
     guru: debug
+  pattern:
+    correlation: '[${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+  include-application-name: false
 
 server:
   port: 8081
@@ -15,3 +18,8 @@ spring:
 sfg:
   brewery:
     beer-service-host: http://localhost:8080
+
+management:
+  tracing:
+    sampling:
+      probability: 1

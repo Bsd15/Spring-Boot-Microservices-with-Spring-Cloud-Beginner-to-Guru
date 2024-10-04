@@ -4,6 +4,9 @@ server:
 logging:
   level:
     guru: debug
+  pattern:
+    correlation: '[${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+  include-application-name: false
 
 spring:
   application:
@@ -11,3 +14,8 @@ spring:
   artemis:
     user: user
     password: password
+
+management:
+  tracing:
+    sampling:
+      probability: 1
