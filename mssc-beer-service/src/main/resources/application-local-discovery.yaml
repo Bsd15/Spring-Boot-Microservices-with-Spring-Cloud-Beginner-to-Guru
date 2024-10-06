@@ -7,5 +7,8 @@ spring:
       discovery:
         enabled: true
         serviceId: 'mssc-config-server'
+      fail-fast: true
+      username: MyUserName
+      password: MySecretPassword
   config:
     import: 'optional:configserver:'
