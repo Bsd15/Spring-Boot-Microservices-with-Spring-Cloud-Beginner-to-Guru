@@ -1,3 +1,5 @@
 eureka:
   client:
     register-with-eureka: false
+    serviceUrl:
+      defaultZone: http://netflix:eureka@localhost:8761/eureka
