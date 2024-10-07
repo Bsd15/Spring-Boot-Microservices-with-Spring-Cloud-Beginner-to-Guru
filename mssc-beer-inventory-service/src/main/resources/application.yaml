@@ -14,6 +14,10 @@ spring:
   artemis:
     user: user
     password: password
+  security:
+    user:
+      name: good
+      password: beer
 
 management:
   tracing:
