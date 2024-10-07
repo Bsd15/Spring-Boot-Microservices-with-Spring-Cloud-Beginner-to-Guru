@@ -12,3 +12,8 @@ spring:
       password: MySecretPassword
   config:
     import: 'optional:configserver:'
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://netflix:eureka@localhost:8761/eureka
