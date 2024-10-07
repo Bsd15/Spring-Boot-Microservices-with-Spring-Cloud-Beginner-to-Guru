@@ -23,6 +23,8 @@ sfg:
     beer-inventory-service:
       host: http://localhost:8082
       inventory-path: /api/v1/beer/{beerId}/inventory
+    inventory-user: good
+    inventory-password: beer
 
 logging:
   level:
