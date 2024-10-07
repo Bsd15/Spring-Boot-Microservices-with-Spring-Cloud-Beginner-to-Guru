@@ -1,6 +1,10 @@
 spring:
   application:
   name: mssc-brewery-eureka
+  security:
+    user:
+      name: netflix
+      password: eureka
 
 server:
   port: 8761
