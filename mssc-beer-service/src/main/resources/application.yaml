@@ -17,6 +17,9 @@ spring:
   artemis:
     user: user
     password: password
+  cloud:
+    config:
+      enabled: false
 
 sfg:
   brewery:

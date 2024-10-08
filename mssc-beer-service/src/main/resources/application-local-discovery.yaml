@@ -4,6 +4,7 @@ spring:
       circuitbreaker:
         enabled: true
     config:
+      enabled: true
       discovery:
         enabled: true
         serviceId: 'mssc-config-server'
