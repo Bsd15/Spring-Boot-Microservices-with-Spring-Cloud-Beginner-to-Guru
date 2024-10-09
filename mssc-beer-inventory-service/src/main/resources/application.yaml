@@ -18,6 +18,9 @@ spring:
     user:
       name: good
       password: beer
+  cloud:
+    config:
+      enabled: false
 
 management:
   tracing:
