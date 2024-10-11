@@ -20,7 +20,14 @@
         <option value="$PROJECT_DIR$/mssc-brewery-eureka/pom.xml" />
         <option value="$PROJECT_DIR$/mssc-inventory-failover/pom.xml" />
         <option value="$PROJECT_DIR$/mssc-config-server/pom.xml" />
+        <option value="$PROJECT_DIR$/sfg-beer-works-bom/pom.xml" />
+        <option value="$PROJECT_DIR$/sfg-brewery-bom/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/sfg-beer-works-bom/sfg-brewery-bom/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_22" default="true" project-jdk-name="22" project-jdk-type="JavaSDK">
