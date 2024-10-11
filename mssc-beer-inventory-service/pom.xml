@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>guru.springframework</groupId>
-        <artifactId>mssc-brewery-bom</artifactId>
+        <artifactId>sfg-brewery-bom</artifactId>
         <version>1.0.17</version>
     </parent>
     <groupId>guru.springframework</groupId>
