@@ -1,6 +1,9 @@
 spring:
-    application:
-      name: inventory-failover
+  application:
+    name: inventory-failover
+  cloud:
+    config:
+      enabled: false
 
 server:
   port: 8083
