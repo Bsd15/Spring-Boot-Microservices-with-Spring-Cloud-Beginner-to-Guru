@@ -1,0 +1,176 @@
+volumes:
+  mssc_brewery_mysql_data:
+    driver: local
+
+services:
+  mysql:
+    image: mysql:8.0.36
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mssc_brewery_mysql_data:/var/lib/mysql
+
+  activemq:
+    image: apache/activemq-artemis:latest
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+    environment:
+      ARTEMIS_USER: user
+      ARTEMIS_PASSWORD: password
+
+  zipkin:
+    image: ghcr.io/openzipkin/zipkin-slim:${TAG:-latest}
+    container_name: zipkin
+    # Environment settings are defined here https://github.com/openzipkin/zipkin/blob/master/zipkin-server/README.md#environment-variables
+    environment:
+      - STORAGE_TYPE=mem
+      # Uncomment to enable self-tracing
+      # - SELF_TRACING_ENABLED=true
+      # Uncomment to increase heap size
+      # - JAVA_OPTS=-Xms128m -Xmx128m -XX:+ExitOnOutOfMemoryError
+    ports:
+      # Port used for the Zipkin UI and HTTP Api
+      - "9411:9411"
+
+  eureka:
+    image: sfgbeerworks/mssc-brewery-eureka:latest
+    ports:
+      - "8761:8761"
+
+  config:
+    image: sfgbeerworks/mssc-config-server:0.0.1-SNAPSHOT
+    ports:
+      - "8888:8888"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://netflix:eureka@eureka:8761/eureka/
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
+
+  inventory-service:
+    image: sfgbeerworks/mssc-beer-inventory-service:0.0.1-SNAPSHOT
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql:
+        condition: service_started
+      activemq:
+        condition: service_started
+      zipkin:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      config:
+        condition: service_healthy
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://netflix:eureka@eureka:8761/eureka/
+      SPRING_PROFILES_ACTIVE: local,local-discovery
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      SPRING_ARTEMIS_BROKER_URL: tcp://activemq:61616
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/beerinventoryservice?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+
+  inventory-failover:
+    image: sfgbeerworks/mssc-inventory-failover:0.0.1-SNAPSHOT
+    depends_on:
+      eureka:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://netflix:eureka@eureka:8761/eureka/
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      MANAGEMENT_HEALTH_JMS_ENABLED: "false"
+    restart: on-failure
+
+  beer-service:
+    image: sfgbeerworks/mssc-beer-service:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_started
+      activemq:
+        condition: service_started
+      zipkin:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      config:
+        condition: service_healthy
+      inventory-service:
+        condition: service_healthy
+      inventory-failover:
+        condition: service_healthy
+    environment:
+      SFG_BREWERY_BEER_INVENTORY_SERVICE: http://inventory-service:8082
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://netflix:eureka@eureka:8761/eureka/
+      SPRING_PROFILES_ACTIVE: local,local-discovery
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      SPRING_ARTEMIS_BROKER_URL: tcp://activemq:61616
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/beerservice?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    restart: on-failure
+
+  order-service:
+    image: sfgbeerworks/mssc-beer-order-service:0.0.1-SNAPSHOT
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_started
+      activemq:
+        condition: service_started
+      zipkin:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      config:
+        condition: service_healthy
+      inventory-service:
+        condition: service_healthy
+      inventory-failover:
+        condition: service_healthy
+      beer-service:
+        condition: service_healthy
+    environment:
+      SFG_BREWERY_BEER_SERVICE_HOST: http://beer-service:8080
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://netflix:eureka@eureka:8761/eureka/
+      SPRING_PROFILES_ACTIVE: local,local-discovery
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      SPRING_ARTEMIS_BROKER_URL: tcp://activemq:61616
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/beerorderservice?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    restart: on-failure
+
+  gateway:
+    image: sfgbeerworks/mssc-brewery-gateway:0.0.1-SNAPSHOT
+    ports:
+      - "9090:9090"
+    depends_on:
+      mysql:
+        condition: service_started
+      activemq:
+        condition: service_started
+      zipkin:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      config:
+        condition: service_healthy
+      inventory-service:
+        condition: service_healthy
+      inventory-failover:
+        condition: service_healthy
+      beer-service:
+        condition: service_healthy
+      order-service:
+        condition: service_healthy
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://netflix:eureka@eureka:8761/eureka/
+      SPRING_PROFILES_ACTIVE: local,local-discovery
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    restart: on-failure
