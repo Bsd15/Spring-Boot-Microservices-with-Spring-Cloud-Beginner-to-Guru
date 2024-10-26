@@ -19,4 +19,4 @@ COPY --from=builder application/spring-boot-loader/ ./
 COPY --from=builder application/snapshot-dependencies/ ./
 COPY --from=builder application/application/ ./
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "org.springframework.boot.loader.launch.JarLauncher"]
-HEALTHCHECK --interval=20s --timeout=10s --start-period=15s CMD ["curl", "-f", "http://localhost:8080/actuator/health"]
+HEALTHCHECK --interval=45s --start-period=50s CMD ["curl", "-f", "http://localhost:8080/actuator/health"]
