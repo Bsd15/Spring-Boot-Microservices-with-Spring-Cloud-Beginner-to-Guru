@@ -6,6 +6,11 @@ spring:
         enabled: true
         serviceId: 'mssc-config-server'
       fail-fast: true
+      retry:
+        initialInterval: 3000
+        multiplier: 1.3
+        maxInterval: 10000
+        maxAttempts: 20
       username: MyUserName
       password: MySecretPassword
   config:
